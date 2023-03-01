@@ -4,9 +4,8 @@ import { PinkButton } from "../../styles/buttons";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { api } from "../../services";
+import { useContext, useEffect } from "react"
+import { RegisterContext } from "../../providers/RegisterContext";
 
 const schema = yup
   .object({
@@ -29,9 +28,9 @@ const schema = yup
   })
   .required();
 
-function RegisterForm({ toast }) {
-  const [user, setNewUser] = useState(null);
-  const navigate = useNavigate();
+function RegisterForm() {
+
+  const { createUser, user, registerUser } = useContext(RegisterContext)
 
   const {
     register,
@@ -42,28 +41,8 @@ function RegisterForm({ toast }) {
   });
 
   useEffect(() => {
-    async function createUser() {
-      try {
-        const response = await api.post("users", user);
-        console.log(response.data);
-        navigate("/login");
-        toast.success("Usuário criado com sucesso!");
-      } catch (error) {
-        console.error(error);
-        toast.error("O email de usuário já existe!");
-      }
-    }
-
     user && createUser();
   }, [user]);
-
-  console.log(user);
-
-  function registerUser(data) {
-    delete data.confirmPass, delete data.module;
-
-    setNewUser(data);
-  }
 
   return (
     <RegisterContainer>

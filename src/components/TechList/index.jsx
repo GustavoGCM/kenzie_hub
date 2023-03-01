@@ -1,7 +1,11 @@
+import { useContext } from "react";
+import { DashboardContext } from "../../providers/DashboardContext";
 import { TechsContainer } from "./styles";
 import add from "/src/assets/+.png";
 
-function TechList({ techs, setModalReg, setModalUpdate }) {
+function TechList() {
+  const { techs, setModalReg, setModalUpdate } = useContext(DashboardContext)
+
   return (
     <TechsContainer>
       <div>

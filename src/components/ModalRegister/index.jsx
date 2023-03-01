@@ -6,7 +6,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { api } from "../../services";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { DashboardContext } from "../../providers/DashboardContext";
 
 const schema = yup
   .object({
@@ -15,8 +16,9 @@ const schema = yup
   })
   .required();
 
-function ModalRegister({ setModalReg, setProfile, toast }) {
-  const [tech, setNewTech] = useState(null);
+function ModalRegister() {
+  const { setModalReg, tech, registerTech, techData } =
+    useContext(DashboardContext);
 
   const {
     register,
@@ -24,24 +26,7 @@ function ModalRegister({ setModalReg, setProfile, toast }) {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
-  function registerTech(data) {
-    setNewTech(data);
-  }
-
   useEffect(() => {
-    async function registerTech() {
-      try {
-        const token = localStorage.getItem("@kenzie-hub:token");
-        await api.post("users/techs", tech, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProfile(token);
-        setModalReg(null);
-        toast.success("Projeto criado com sucesso!");
-      } catch (error) {
-        console.error(error);
-      }
-    }
     tech && registerTech();
   }, [tech]);
 
@@ -56,7 +41,7 @@ function ModalRegister({ setModalReg, setProfile, toast }) {
             onClick={() => setModalReg(null)}
           />
         </header>
-        <form onSubmit={handleSubmit(registerTech)}>
+        <form onSubmit={handleSubmit(techData)}>
           <label htmlFor="title">Nome</label>
           <Input
             type="text"

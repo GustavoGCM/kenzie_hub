@@ -1,14 +1,12 @@
 import Logo from "../../components/Logo";
 import RegisterForm from "../../components/RegisterForm";
 import { PageContainer } from "../../styles/pagesStyles";
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { RegisterContext } from "../../providers/RegisterContext";
 
 function RegisterPage({ toast }) {
-  const navigate = useNavigate();
+  const { returnPage } = useContext(RegisterContext)
 
-  function returnPage() {
-    navigate(-1);
-  }
   return (
     <PageContainer>
       <Logo

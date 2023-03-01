@@ -2,10 +2,10 @@ import x from "/src/assets/X.png";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { api } from "../../services";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ModalContainer } from "../ModalRegister/styles";
 import { ButtonContainer } from "./styles";
+import { DashboardContext } from "../../providers/DashboardContext";
 
 const schema = yup
   .object({
@@ -13,56 +13,21 @@ const schema = yup
   })
   .required();
 
-function ModalUpdate({ setModalUpdate, setProfile, techID, toast }) {
-  const [tech, setNewTech] = useState(null);
-  const [deleted, setDeleted] = useState(null);
-
+function ModalUpdate() {
+  const { setModalUpdate, deleteTech, deleteRequest, update, updateTechItem, tech, deleted } =
+    useContext(DashboardContext);
+  
   const {
     register,
-    handleSubmit,
-    formState: { errors },
+    handleSubmit
   } = useForm({ resolver: yupResolver(schema) });
 
-  function deleteTech(data) {
-    setDeleted(data);
-  }
-
   useEffect(() => {
-    async function deleteRequest() {
-      try {
-        const token = localStorage.getItem("@kenzie-hub:token");
-        await api.delete(`users/techs/${techID}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setModalUpdate(null);
-        toast.success("Projeto deletado com sucesso");
-        setProfile(token);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
     deleted && deleteRequest();
   }, [deleted]);
 
-  function updateTech(data) {
-    setNewTech(data);
-  }
 
   useEffect(() => {
-    async function update() {
-      try {
-        const token = localStorage.getItem("@kenzie-hub:token");
-        const response = await api.put(`users/techs/${techID}`, tech, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setModalUpdate(null);
-        toast.success("Projeto alterado com sucesso");
-        setProfile(token);
-      } catch (error) {
-        console.error(error);
-      }
-    }
     tech && update();
   }, [tech]);
 
@@ -88,7 +53,7 @@ function ModalUpdate({ setModalUpdate, setProfile, techID, toast }) {
             <button
               className="register"
               id="register"
-              onClick={handleSubmit(updateTech)}
+              onClick={handleSubmit(updateTechItem)}
             >
               Cadastrar
             </button>

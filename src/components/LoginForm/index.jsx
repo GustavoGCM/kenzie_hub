@@ -4,9 +4,8 @@ import { LoginContainer } from "./styles";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { api } from "../../services";
+import { useContext, useEffect} from "react";
+import { LoginContext } from "../../providers/LoginContext";
 
 const schema = yup
   .object({
@@ -18,42 +17,23 @@ const schema = yup
   })
   .required();
 
-function LoginForm({ toast }) {
-  const [loginUser, setLogin] = useState(null);
+function LoginForm() {
+ 
+  const { log, login, RedirectToRegister, loginUser } = useContext(LoginContext)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
-  const navigate = useNavigate();
+  
+  
 
   useEffect(() => {
-    async function log() {
-      localStorage.clear();
-      try {
-        const response = await api.post("sessions", loginUser);
-        localStorage.setItem("@kenzie-hub:token", response.data.token);
-        localStorage.setItem("@USER", JSON.stringify(response.data.user));
-        navigate("/dashboard");
-        toast.success("Usuário logado com sucesso!");
-      } catch (error) {
-        console.error(error);
-        setLogin(null)
-        toast.error("Senha ou email inválidos.");
-      }
-    }
 
     loginUser && log();
+
   }, [loginUser]);
-
-  function login(data) {
-    setLogin(data);
-  }
-
-  function RedirectToRegister() {
-    navigate("/register");
-  }
 
   return (
     <LoginContainer>
